@@ -1,5 +1,5 @@
 const page = () => {
-  return <section>page</section>;
+  return <main className="text-center">hy there bro</main>;
 };
 
 export default page;
