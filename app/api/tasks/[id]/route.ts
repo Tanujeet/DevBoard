@@ -33,4 +33,21 @@ export async function PATCH(
   });
 }
 
-export async function DELETE() {}
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
+  const { userId } = await auth();
+  if (!userId) {
+    return new NextResponse("Unauthorized", { status: 401 });
+  }
+  const taskId = params.id;
+  try {
+    const deleleTask = await prisma.task.delete({
+      where: { id: taskId, userId },
+    });
+    return NextResponse.json({ message: "Task deleted", task: deleleTask });
+  } catch (error) {
+    return new NextResponse("Task not found", { status: 404 });
+  }
+}
