@@ -1,8 +1,6 @@
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma/prisma";
 import { NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export async function PATCH(
   req: Request,
@@ -23,7 +21,7 @@ export async function PATCH(
   }
 
   const updatedProject = await prisma.project.update({
-    Where: { id: projectId, userId },
+    where: { id: projectId, userId },
     data: {
       name,
       description,

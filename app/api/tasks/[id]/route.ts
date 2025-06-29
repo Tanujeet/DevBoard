@@ -1,8 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma/prisma";
 import { NextResponse } from "next/server";
 
-const prisma = PrismaClient();
+
 
 export async function PATCH(
   req: Request,
