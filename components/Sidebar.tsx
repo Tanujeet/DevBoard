@@ -8,7 +8,7 @@ import {
 
 export default function Sidebar() {
   return (
-    <aside className="w-64 h-screen bg-white dark:bg-[#111] border-r px-4 py-6 flex flex-col">
+    <aside className="w-64 h-screen bg-black border-r px-4 py-6 flex flex-col">
       <div className="text-2xl font-bold text-purple-600 mb-10">
         TaskHive 🐝
       </div>
