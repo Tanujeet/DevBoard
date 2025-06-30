@@ -31,20 +31,27 @@ const page = () => {
 
   useEffect(() => {
     const fetchSummary = async () => {
-      const res = await fetch("api/summary");
-      const data = await res.json();
-      setstats(data);
+      try {
+        const res = await axiosInstance.get("summary");
+        setstats(res.data);
+      } catch (error) {
+        console.log("failed to fetch sumamry", error);
+      }
     };
     fetchSummary();
   }, []);
 
   useEffect(() => {
     const fetchRecentTask = async () => {
-      const res = await axiosInstance.get("tasks");
-      setRecentTasks(res.data.tasks);
+      try {
+        const res = await axiosInstance.get("tasks");
+        setRecentTasks(res.data.tasks);
+      } catch (error) {
+        console.log("Failed to fetch task", error);
+      }
     };
     fetchRecentTask();
-  });
+  }, []);
 
   const cards = [
     { title: "Total Task", value: stats.totaltask },
