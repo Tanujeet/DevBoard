@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { axiosInstance } from "@/lib/axios";
 import { useEffect, useState } from "react";
 import {
   Table,
@@ -11,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
 
 const page = () => {
   const [stats, setstats] = useState({
@@ -18,6 +20,14 @@ const page = () => {
     Completed: 0,
     PomodoroMinutes: 0,
   });
+  type Task = {
+    id: string;
+    title: string;
+    status: string;
+    createdAt: string;
+  };
+
+  const [recentTasks, setRecentTasks] = useState<Task[]>([]);
 
   useEffect(() => {
     const fetchSummary = async () => {
@@ -28,15 +38,18 @@ const page = () => {
     fetchSummary();
   }, []);
 
+  useEffect(() => {
+    const fetchRecentTask = async () => {
+      const res = await axiosInstance.get("tasks");
+      setRecentTasks(res.data.tasks);
+    };
+    fetchRecentTask();
+  });
+
   const cards = [
     { title: "Total Task", value: stats.totaltask },
     { title: "Completed", value: stats.Completed },
     { title: "Pomodoro Minutes", value: stats.PomodoroMinutes },
-  ];
-  const recentTasks = [
-    { name: "Finish blog post", status: "In Progress", dueDate: "July 2" },
-    { name: "Push repo", status: "Completed", dueDate: "June 30" },
-    { name: "Team Meeting", status: "Pending", dueDate: "July 3" },
   ];
 
   const { user } = useUser();
@@ -84,15 +97,22 @@ const page = () => {
 
           <TableBody>
             {recentTasks.map((task, idx) => (
-              <TableRow
-                key={idx}
-                className="text-lg even:bg-gray-50 hover:bg-gray-100 transition-colors"
-              >
-                <TableCell className="p-4">{task.name}</TableCell>
-                <TableCell className="p-4">{task.status}</TableCell>
-                <TableCell className="p-4">{task.dueDate}</TableCell>
+              <TableRow key={task.id || idx}>
+                <TableCell>{task.title}</TableCell>
+                <TableCell>{task.status}</TableCell>
+                <TableCell>{formatDate(task.createdAt)}</TableCell>
               </TableRow>
             ))}
+            {recentTasks.length === 0 && (
+              <TableRow>
+                <TableCell
+                  colSpan={3}
+                  className="text-center text-gray-500 py-4"
+                >
+                  No recent tasks found.
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </section>
