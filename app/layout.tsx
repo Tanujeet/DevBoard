@@ -10,6 +10,7 @@ import {
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
+import Topbar from "@/components/Topbar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,24 +39,16 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           <div className="flex h-screen w-full">
+            {/* Sidebar: always on left */}
             <Sidebar />
 
+            {/* Main Section: Topbar + page content */}
             <div className="flex-1 flex flex-col">
-              <header className="flex justify-end items-center p-4 gap-4 h-16 border-b">
-                <SignedOut>
-                  <SignInButton />
-                  <SignUpButton>
-                    <button className="bg-[#6c47ff] text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 cursor-pointer">
-                      Sign Up
-                    </button>
-                  </SignUpButton>
-                </SignedOut>
-                <SignedIn>
-                  <UserButton />
-                </SignedIn>
-              </header>
+              {/* 🔥 Topbar goes here */}
+              <Topbar />
 
-              <main className="flex-1 p-4 overflow-auto">{children}</main>
+              {/* Page content */}
+              <main className="flex-1 overflow-auto p-4">{children}</main>
             </div>
           </div>
         </body>
