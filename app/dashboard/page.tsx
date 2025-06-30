@@ -81,7 +81,6 @@ const page = () => {
         </div>
       </div>
 
-      {/* Recent Tasks Section */}
       <section className="mt-10">
         <div className="text-2xl font-semibold mb-4 pl-2 sm:pl-4">
           Recent Task
