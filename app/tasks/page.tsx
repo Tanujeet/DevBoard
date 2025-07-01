@@ -3,8 +3,8 @@
 
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/lib/axios";
-import TaskForm from "@/components/TaskForm"; // Adjust path as necessary
-import TaskList from "@/components/TaskList"; // Adjust path as necessary
+import TaskForm from "@/components/TaskForm";
+import TaskList from "@/components/TaskList";
 
 export default function Page() {
   type TaskType = {
@@ -46,7 +46,11 @@ export default function Page() {
   return (
     <main className="max-w-4xl mx-auto p-6">
       <TaskForm onSubmitSuccess={handleAddTask} />
-      <TaskList tasks={tasks} />
+      <TaskList
+        tasks={tasks}
+        onTaskDelete={fetchTasks}
+        onTaskEdit={fetchTasks}
+      />
     </main>
   );
 }
