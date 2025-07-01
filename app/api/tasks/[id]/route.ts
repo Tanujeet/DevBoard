@@ -4,34 +4,43 @@ import { NextResponse } from "next/server";
 
 
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const body = await req.json();
-  const { title } = body;
-  const url = new URL(req.url);
+export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth();
+  if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
-  if (!userId) {
-    return new NextResponse("Unauthorized", { status: 401 });
+  const body = await req.json();
+  const { title, status, dueDate } = body;
+
+  // Validate inputs
+  if (!title || !status) {
+    return new NextResponse("Title and status required", { status: 400 });
   }
 
-  const taskId = params.id;
+  const allowedStatuses = ["pending", "in-progress", "completed"];
+  if (!allowedStatuses.includes(status)) {
+    return new NextResponse("Invalid status", { status: 400 });
+  }
 
-  const updatedTask = await prisma.task.update({
-    where: {
-      id: taskId,
-      userId,
-    },
-    data: { title },
-  });
+  try {
+    const updatedTask = await prisma.task.update({
+      where: {
+        id: params.id,
+        userId,
+      },
+      data: {
+        title,
+        status,
+        dueDate: dueDate ? new Date(dueDate) : null, // ✅ KEY LINE
+      },
+    });
 
-  return NextResponse.json({
-    message: "Task updated",
-    task: updatedTask,
-  });
+    return NextResponse.json({ task: updatedTask });
+  } catch (error) {
+    console.error("PATCH ERROR:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
 }
+
 
 export async function DELETE(
   req: Request,

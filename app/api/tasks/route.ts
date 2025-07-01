@@ -21,23 +21,28 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const { userId } = await auth();
-
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   const body = await req.json();
-  const { title } = body;
+  const { title, status, dueDate } = body;
 
   if (!title || title.trim() === "") {
     return new NextResponse("Title is required", { status: 400 });
   }
 
+  const allowedStatuses = ["pending", "in-progress", "completed"];
+  if (!allowedStatuses.includes(status)) {
+    return new NextResponse("Invalid status", { status: 400 });
+  }
+
   const createNewTask = await prisma.task.create({
     data: {
-      title: title,
-      userId: userId,
-      status: "todo",
+      title,
+      userId,
+      status,
+      dueDate: dueDate ? new Date(dueDate) : null,
     },
   });
 

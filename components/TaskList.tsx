@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
 
 type Task = {
   id: string;
@@ -44,9 +45,9 @@ const TaskList = ({
   const handleEditClick = (task: Task) => {
     setEditingTask(task);
     setFormData({
-      title: task.title,
-      dueDate: task.dueDate,
-      status: task.status,
+      title: task.title || "",
+      dueDate: task.dueDate || "",
+      status: task.status || "",
     });
   };
 
@@ -62,10 +63,21 @@ const TaskList = ({
   const handleEditSubmit = async () => {
     if (!editingTask) return;
 
+    // ✅ Validation block
+    if (!["pending", "in-progress", "completed"].includes(formData.status)) {
+      alert("Please select a valid status");
+      return;
+    }
+
     try {
-      await axiosInstance.patch(`/tasks/${editingTask.id}`, formData);
+      await axiosInstance.patch(`/tasks/${editingTask.id}`, {
+        title: formData.title,
+        status: formData.status,
+        dueDate: formData.dueDate || null, // Important
+      });
+
       setEditingTask(null);
-      onTaskEdit(); // Refetch from parent
+      onTaskEdit(); // Refetch parent data
     } catch (err) {
       console.error("Failed to update task:", err);
     }
@@ -84,9 +96,8 @@ const TaskList = ({
               className="flex items-center justify-between p-4 rounded-xl border shadow-sm bg-white"
             >
               <div>
-                <p className="text-sm text-gray-500 mb-1">
-                  Due: {task.dueDate}
-                </p>
+                <p>Due: {formatDate(task.dueDate)}</p>
+
                 <h3 className="text-lg font-medium">{task.title}</h3>
                 <p className="text-muted-foreground">{task.status}</p>
               </div>
@@ -125,26 +136,33 @@ const TaskList = ({
           <div className="space-y-4">
             <Input
               placeholder="Title"
-              value={formData.title}
+              value={formData.title || ""}
               onChange={(e) =>
                 setFormData({ ...formData, title: e.target.value })
               }
             />
-            <Input
-              placeholder="Due Date"
+
+            <input
               type="date"
-              value={formData.dueDate}
+              value={formData.dueDate || ""}
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }
             />
-            <Input
-              placeholder="Status"
-              value={formData.status}
+
+            <select
+              className="w-full border rounded-md p-2 text-sm"
+              value={formData.status || ""}
               onChange={(e) =>
                 setFormData({ ...formData, status: e.target.value })
               }
-            />
+            >
+              <option value="">Select Status</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setEditingTask(null)}>
                 Cancel
