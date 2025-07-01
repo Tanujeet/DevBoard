@@ -73,11 +73,11 @@ const TaskList = ({
       await axiosInstance.patch(`/tasks/${editingTask.id}`, {
         title: formData.title,
         status: formData.status,
-        dueDate: formData.dueDate || null, // Important
+        dueDate: formData.dueDate || null,
       });
 
       setEditingTask(null);
-      onTaskEdit(); // Refetch parent data
+      onTaskEdit(); 
     } catch (err) {
       console.error("Failed to update task:", err);
     }
