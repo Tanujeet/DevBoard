@@ -32,7 +32,7 @@ const page = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const res = await axiosInstance.get("summary");
+        const res = await axiosInstance.get("/pomodara/summary");
         setstats(res.data);
       } catch (error) {
         console.log("failed to fetch sumamry", error);
