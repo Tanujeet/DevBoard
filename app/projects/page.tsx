@@ -3,9 +3,20 @@
 import AddProject from "@/components/AddProject";
 import { Search } from "lucide-react";
 import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { formatDate } from "@/lib/utils";
 
 const page = () => {
   const [viewMode, setViewMode] = useState("list");
+  const [recentProjects, setrecentProjects] = useState("list");
 
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-6">
@@ -43,12 +54,41 @@ const page = () => {
       </section>
 
       {/* View Toggle: List / Card */}
-      <section className="flex items-center space-x-4 mt-20">
+      <section className="space-y-6 mt-20">
+        {/* View Toggle Buttons */}
         <div className="flex gap-7">
-          <button onClick={() => setViewMode("list")}>List</button>
-          <button onClick={() => setViewMode("card")}>Card</button>
+          <button onClick={() => setViewMode("list")} className="text-2xl ">
+            List
+          </button>
+          <button onClick={() => setViewMode("card")} className="text-2xl ">
+            Card
+          </button>
         </div>
-        <div className="border border-b-black"></div>
+
+        {/* Conditional View */}
+        {viewMode === "list" ? (
+          <Table className="w-full border border-gray-300 rounded-lg overflow-hidden">
+            <TableHeader>
+              <TableRow className="bg-gray-100">
+                <TableHead className="text-xl font-semibold text-left p-4">
+                  Project name
+                </TableHead>
+                <TableHead className="text-xl font-semibold text-left p-4">
+                  Description
+                </TableHead>
+                <TableHead className="text-xl font-semibold text-left p-4">
+                  Status
+                </TableHead>
+                <TableHead className="text-xl font-semibold text-left p-4">
+                  View
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            {/* Add TableBody here */}
+          </Table>
+        ) : (
+          <p>Card view will be here</p>
+        )}
       </section>
     </main>
   );
