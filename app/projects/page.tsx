@@ -20,6 +20,17 @@ const page = () => {
             className="w-full border border-black rounded-xl p-2 pl-10 "
           />
         </div>
+        <div className="flex items-center space-x-4 mt-4">
+          <button className="border border-black rounded-2xl px-4 py-2 hover:bg-black hover:text-white transition">
+            All Projects
+          </button>
+          <button className="border border-black rounded-2xl px-4 py-2 hover:bg-black hover:text-white transition">
+            Active
+          </button>
+          <button className="border border-black rounded-2xl px-4 py-2 hover:bg-black hover:text-white transition">
+            Archived
+          </button>
+        </div>
       </section>
     </main>
   );
