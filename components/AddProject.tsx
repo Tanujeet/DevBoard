@@ -7,19 +7,42 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
+import { useEffect, useState } from "react";
+import { axiosInstance } from "@/lib/axios";
+import axios from "axios";
 
 const AddProject = () => {
+  type ProjectType = {
+    name: string;
+    descrption: string;
+  };
 
+  const [open, setOpen] = useState(false);
+  const [projectName, setProjectName] = useState("");
+  const [description, setDescription] = useState("");
 
-    const createProject = () => {};
-
-
+  const handlenewProject = async (newProjectType: {
+    name: string;
+    descritpion: string;
+  }) => {
+    try {
+      await axiosInstance.post("projects", newProjectType);
+      console.log("Project created successfully");
+      setOpen(false);
+      setProjectName("");
+      setDescription("");
+    } catch (err) {
+      console.log("Failed to create new task", err);
+    }
+  };
 
   return (
     <div>
-      <Dialog>
-        <DialogTrigger className="border border-black rounded-2xl p-2  hover:bg-black hover:text-white transition">
-          Add Project
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button className="border border-black rounded-2xl p-2  hover:bg-black hover:text-white transition">
+            Add Project
+          </button>
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
@@ -29,17 +52,29 @@ const AddProject = () => {
             <input
               type="text"
               placeholder="Enter your project name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-4 py-2"
             />
             <input
               type="text"
               placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
               className="w-full border border-gray-300 rounded-md px-4 py-2"
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button>Cancel</Button>
-            <Button>Save</Button>
+            <Button
+              onClick={() =>
+                handlenewProject({
+                  name: projectName,
+                  descritpion: description,
+                })
+              }
+            >
+              Save
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
