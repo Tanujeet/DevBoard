@@ -63,7 +63,6 @@ const TaskList = ({
   const handleEditSubmit = async () => {
     if (!editingTask) return;
 
-    // ✅ Validation block
     if (!["pending", "in-progress", "completed"].includes(formData.status)) {
       alert("Please select a valid status");
       return;
@@ -77,7 +76,7 @@ const TaskList = ({
       });
 
       setEditingTask(null);
-      onTaskEdit(); 
+      onTaskEdit();
     } catch (err) {
       console.error("Failed to update task:", err);
     }
