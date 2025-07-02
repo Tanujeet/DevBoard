@@ -15,14 +15,22 @@ import {
 import {  useState } from "react";
 import { useProjectStore } from "@/store/projectstore";
 import { MoreVertical } from "lucide-react";
+import { axiosInstance } from "@/lib/axios";
 
 const ProjectList = () => {
+  const [viewMode, setViewMode] = useState("list");
 
-const [viewMode, setViewMode] = useState("list");
-
-
+  const { fetchRecentProjects } = useProjectStore();
   const { recentProjects } = useProjectStore();
-  
+
+  const onDelete = async (projectsId: string) => {
+    try {
+      await axiosInstance.delete(`/projects/${projectsId}`);
+      await fetchRecentProjects();
+    } catch (err) {
+      console.log("failed to delete Projects", err);
+    }
+  };
 
   return (
     <section className="space-y-6 mt-20">
@@ -67,7 +75,10 @@ const [viewMode, setViewMode] = useState("list");
 
                         <DropdownMenuContent className="w-32" align="end">
                           <DropdownMenuItem>Edit</DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem
+                            className="text-red-600"
+                            onClick={() => onDelete(project.id)}
+                          >
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>
