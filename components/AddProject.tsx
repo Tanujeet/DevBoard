@@ -9,9 +9,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "./ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { axiosInstance } from "@/lib/axios";
-import axios from "axios";
+
 import { useProjectStore } from "@/store/projectstore";
 
 const AddProject = () => {
