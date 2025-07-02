@@ -6,36 +6,22 @@ import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { formatDate } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+
 import { axiosInstance } from "@/lib/axios";
+import { useProjectStore } from "@/store/projectstore";
 
 const page = () => {
-  type Project = {
-    id: string;
-    name: string;
-    description: string;
-    status?: string;
-  };
-
-  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
   const [viewMode, setViewMode] = useState("list");
 
+  const { recentProjects } = useProjectStore();
+  const { fetchRecentProjects } = useProjectStore();
+
   useEffect(() => {
-    const fetchRecentProjects = async () => {
-      try {
-        const res = await axiosInstance.get("projects");
-        setRecentProjects(res.data.projects);
-      } catch (error) {
-        console.log("Failed to fetch projects", error);
-      }
-    };
     fetchRecentProjects();
   }, []);
 

@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { axiosInstance } from "@/lib/axios";
 import axios from "axios";
+import { useProjectStore } from "@/store/projectstore";
 
 const AddProject = () => {
   type ProjectType = {
@@ -19,23 +20,20 @@ const AddProject = () => {
     descrption: string;
   };
 
-  type Project = {
-    name: string;
-    descroption: string;
-  };
-
   const [open, setOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
-  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
+
+  const { fetchRecentProjects } = useProjectStore();
 
   const handlenewProject = async (ProjectType: {
     name: string;
-    descritpion: string;
+    description: string;
   }) => {
     try {
       await axiosInstance.post("projects", ProjectType);
       console.log("Project created successfully");
+      await fetchRecentProjects();
       setOpen(false);
       setProjectName("");
       setDescription("");
@@ -77,7 +75,7 @@ const AddProject = () => {
               onClick={() =>
                 handlenewProject({
                   name: projectName,
-                  descritpion: description,
+                  description: description,
                 })
               }
             >
