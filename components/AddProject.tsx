@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -17,16 +19,22 @@ const AddProject = () => {
     descrption: string;
   };
 
+  type Project = {
+    name: string;
+    descroption: string;
+  };
+
   const [open, setOpen] = useState(false);
   const [projectName, setProjectName] = useState("");
   const [description, setDescription] = useState("");
+  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
 
-  const handlenewProject = async (newProjectType: {
+  const handlenewProject = async (ProjectType: {
     name: string;
     descritpion: string;
   }) => {
     try {
-      await axiosInstance.post("projects", newProjectType);
+      await axiosInstance.post("projects", ProjectType);
       console.log("Project created successfully");
       setOpen(false);
       setProjectName("");

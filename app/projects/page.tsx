@@ -2,7 +2,7 @@
 
 import AddProject from "@/components/AddProject";
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -13,20 +13,39 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { axiosInstance } from "@/lib/axios";
 
 const page = () => {
+  type Project = {
+    id: string;
+    name: string;
+    description: string;
+    status?: string;
+  };
+
+  const [recentProjects, setRecentProjects] = useState<Project[]>([]);
   const [viewMode, setViewMode] = useState("list");
-  const [recentProjects, setrecentProjects] = useState("list");
+
+  useEffect(() => {
+    const fetchRecentProjects = async () => {
+      try {
+        const res = await axiosInstance.get("projects");
+        setRecentProjects(res.data.projects);
+      } catch (error) {
+        console.log("Failed to fetch projects", error);
+      }
+    };
+    fetchRecentProjects();
+  }, []);
 
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-6">
-      {/* Top Header + Add Button */}
       <section className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Projects</h1>
         <AddProject />
       </section>
 
-      {/* Search Input */}
       <section>
         <div className="relative w-full md:w-[600px]">
           <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -53,9 +72,7 @@ const page = () => {
         </button>
       </section>
 
-      {/* View Toggle: List / Card */}
       <section className="space-y-6 mt-20">
-        {/* View Toggle Buttons */}
         <div className="flex gap-7">
           <button onClick={() => setViewMode("list")} className="text-2xl ">
             List
@@ -65,7 +82,6 @@ const page = () => {
           </button>
         </div>
 
-        {/* Conditional View */}
         {viewMode === "list" ? (
           <Table className="w-full border border-gray-300 rounded-lg overflow-hidden">
             <TableHeader>
@@ -76,15 +92,27 @@ const page = () => {
                 <TableHead className="text-xl font-semibold text-left p-4">
                   Description
                 </TableHead>
-                <TableHead className="text-xl font-semibold text-left p-4">
-                  Status
-                </TableHead>
-                <TableHead className="text-xl font-semibold text-left p-4">
-                  View
-                </TableHead>
               </TableRow>
             </TableHeader>
-            {/* Add TableBody here */}
+            <TableBody>
+              {recentProjects.length > 0 ? (
+                recentProjects.map((project) => (
+                  <TableRow key={project.id}>
+                    <TableCell>{project.name}</TableCell>
+                    <TableCell>{project.description}</TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={2}
+                    className="text-center text-gray-500 py-4"
+                  >
+                    No recent projects found.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
           </Table>
         ) : (
           <p>Card view will be here</p>
