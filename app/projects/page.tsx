@@ -34,7 +34,7 @@ const page = () => {
         <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-black transition">
           Active
         </button>
-        <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-blacke transition">
+        <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-black transition">
           Archived
         </button>
       </section>
