@@ -1,7 +1,19 @@
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo } from "react";
+import { debounce } from "lodash";
 
 const SearchFilter = ({ searchQuery, setSearchQuery }: any) => {
+  const debouncedSetSearchQuery = useMemo(
+    () => debounce(setSearchQuery, 500),
+    [setSearchQuery]
+  );
+
+  useEffect(() => {
+    return () => {
+      debouncedSetSearchQuery.cancel();
+    };
+  }, [debouncedSetSearchQuery]);
+
   return (
     <section>
       <div className="relative w-full md:w-[600px]">
@@ -12,7 +24,8 @@ const SearchFilter = ({ searchQuery, setSearchQuery }: any) => {
           type="text"
           placeholder="Search Projects"
           className="w-full border border-black rounded-xl p-2 pl-10"
-          onChange={(e) => setSearchQuery(e.target.value)}
+          defaultValue={searchQuery}
+          onChange={(e) => debouncedSetSearchQuery(e.target.value)}
         />
       </div>
     </section>
