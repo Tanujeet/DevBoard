@@ -12,7 +12,7 @@ import SearchFilter from "@/components/SearchFilter";
 const page = () => {
   const { fetchRecentProjects } = useProjectStore();
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
+
 
   useEffect(() => {
     fetchRecentProjects();
@@ -38,7 +38,7 @@ const page = () => {
           Archived
         </button>
       </section>
-      <ProjectList searchQuery={searchQuery} statusFilter={statusFilter} />
+      <ProjectList searchQuery={searchQuery} />
     </main>
   );
 };

@@ -23,7 +23,6 @@ import { filterProjects } from "@/lib/utils";
 import { Project } from "@/type/project";
 type Props = {
   searchQuery: string;
-  statusFilter: string;
 };
 
 const ProjectList = ({ searchQuery }: Props) => {
