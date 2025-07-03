@@ -11,8 +11,22 @@ export async function GET(req: Request) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
+  const { searchParams } = new URL(req.url);
+  const statusFilter = searchParams.get("statusFilter") || "All";
+
+  // Validate that status is one of the allowed values
+  const allowedStatuses = ["All", "Active", "Archived", "Completed"];
+  if (!allowedStatuses.includes(statusFilter)) {
+    return new NextResponse("Invalid status filter", { status: 400 });
+  }
+
   const newProjects = await prisma.project.findMany({
-    where: { userId },
+    where: {
+      userId,
+      ...(statusFilter !== "All" && {
+        status: statusFilter as "Active" | "Archived" | "Completed",
+      }),
+    },
   });
 
   return NextResponse.json({ projects: newProjects });
@@ -36,6 +50,7 @@ export async function POST(req: Request) {
       name,
       description,
       userId,
+      status: "Active",
     },
   });
   return NextResponse.json({

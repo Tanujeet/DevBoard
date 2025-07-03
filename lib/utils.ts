@@ -1,3 +1,4 @@
+import { Project } from "@/type/project";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -17,22 +18,19 @@ export const formatDate = (dateStr: string) => {
   return date.toLocaleDateString("en-US", options);
 };
 
-
-export type Project = {
-  id: string;
-  name: string;
-  description: string;
-};
-
 export function filterProjects(
   projects: Project[],
-  searchQuery: string
+  searchQuery: string,
+  statusFilter: string
 ): Project[] {
   return projects.filter((project) => {
     const matchesSearch =
       project.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       project.description.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesSearch;
+    const matchesStatus =
+      statusFilter === "All" || project.status === statusFilter;
+
+    return matchesSearch && matchesStatus;
   });
 }

@@ -12,7 +12,9 @@ import SearchFilter from "@/components/SearchFilter";
 const page = () => {
   const { fetchRecentProjects } = useProjectStore();
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [statusFilter, setStatusFilter] = useState<
+    "All" | "Active" | "Archived" | "Completed"
+  >("All");
 
   useEffect(() => {
     fetchRecentProjects();
@@ -28,17 +30,39 @@ const page = () => {
       <SearchFilter searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <section className="flex items-center space-x-4">
-        <button className="border border-black rounded-2xl px-4 py-2   bg-black text-white   hover:bg-white hover:text-black transition">
+        <button
+          onClick={() => setStatusFilter("All")}
+          className={`border border-black rounded-2xl px-4 py-2 transition ${
+            statusFilter === "All"
+              ? "bg-black text-white"
+              : "bg-white text-black hover:bg-black hover:text-white"
+          }`}
+        >
           All Projects
         </button>
-        <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-black transition">
+        <button
+          onClick={() => setStatusFilter("Active")}
+          className={`border border-black rounded-2xl px-4 py-2 transition ${
+            statusFilter === "Active"
+              ? "bg-black text-white"
+              : "bg-white text-black hover:bg-black hover:text-white"
+          }`}
+        >
           Active
         </button>
-        <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-black transition">
+        <button
+          onClick={() => setStatusFilter("Archived")}
+          className={`border border-black rounded-2xl px-4 py-2 transition ${
+            statusFilter === "Archived"
+              ? "bg-black text-white"
+              : "bg-white text-black hover:bg-black hover:text-white"
+          }`}
+        >
           Archived
         </button>
       </section>
-      <ProjectList searchQuery={searchQuery} />
+
+      <ProjectList searchQuery={searchQuery} statusFilter={statusFilter} />
     </main>
   );
 };

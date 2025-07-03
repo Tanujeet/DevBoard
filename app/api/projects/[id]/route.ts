@@ -25,6 +25,7 @@ export async function PATCH(
     data: {
       name,
       description,
+      status: "Archived",
     },
   });
 

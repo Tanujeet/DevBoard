@@ -21,18 +21,24 @@ import { axiosInstance } from "@/lib/axios";
 import ProjectForm from "@/components/ProjectForm";
 import { filterProjects } from "@/lib/utils";
 import { Project } from "@/type/project";
+
 type Props = {
   searchQuery: string;
+  statusFilter: string;
 };
 
-const ProjectList = ({ searchQuery }: Props) => {
+const ProjectList = ({ searchQuery, statusFilter }: Props) => {
   const [formOpen, setFormOpen] = useState(false);
 
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const { fetchRecentProjects, recentProjects } = useProjectStore();
 
-  const filteredProjects = filterProjects(recentProjects, searchQuery);
+  const filteredProjects = filterProjects(
+    recentProjects,
+    searchQuery,
+    statusFilter
+  );
 
   const onDelete = async (projectId: string) => {
     try {

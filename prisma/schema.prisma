@@ -24,14 +24,21 @@ model Task {
   pomodoroSessions PomodoroSession[]
 }
 
+enum ProjectStatus {
+  Active
+  Archived
+  Completed
+}
+
+
 
 model Project {
   id          String   @id @default(uuid())
   name        String
   description String?
+  status       ProjectStatus   @default(Active)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-
   userId String
   tasks  Task[]
 }

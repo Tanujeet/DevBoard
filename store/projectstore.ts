@@ -1,14 +1,9 @@
 // store/projectStore.ts
 import { axiosInstance } from "@/lib/axios";
+import { Project } from "@/type/project";
 import { create } from "zustand";
 
-
-type Project = {
-  id: string;
-  name: string;
-  description: string;
-  status?: string;
-};
+;
 
 type ProjectState = {
   recentProjects: Project[];
