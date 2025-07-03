@@ -52,15 +52,21 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
 
   const onArchive = async (project: Project) => {
     try {
-      console.log("Archiving project:", project);
       if (project.status !== "Archived") {
         await axiosInstance.patch(`/projects/${project.id}`, {
           name: project.name,
           description: project.description,
           status: "Archived",
         });
-        await fetchRecentProjects();
+      } else {
+        await axiosInstance.patch(`/projects/${project.id}`, {
+          name: project.name,
+          description: project.description,
+          status: "Active",
+        });
       }
+
+      await fetchRecentProjects();
     } catch (err) {
       console.log("Failed to archive project", err);
     }
@@ -124,7 +130,9 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
                         Edit
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onArchive(project)}>
-                        Archive
+                        {project.status === "Archived"
+                          ? "Unarchive"
+                          : "Archive"}
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-red-600"
