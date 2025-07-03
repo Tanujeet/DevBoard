@@ -21,6 +21,7 @@ import { axiosInstance } from "@/lib/axios";
 import ProjectForm from "@/components/ProjectForm";
 import { filterProjects } from "@/lib/utils";
 import { Project } from "@/type/project";
+import { tr } from "zod/v4/locales";
 
 type Props = {
   searchQuery: string;
@@ -49,6 +50,21 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
     }
   };
 
+  const onArchive = async (project: Project) => {
+    try {
+      if (project.status !== "Archived") {
+        await axiosInstance.patch(`/projects/${project.id}`, {
+          name: project.name,
+          description: project.description,
+          status: "Archived",
+        });
+        await fetchRecentProjects();
+      }
+    } catch (err) {
+      console.log("Failed to archive project", err);
+    }
+  };
+
   return (
     <section className="space-y-6 mt-20">
       <div className="flex gap-7">
@@ -64,6 +80,9 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
             <TableHead className="text-xl font-semibold text-left p-4">
               Description
             </TableHead>
+            <TableHead className="text-xl font-semibold text-left p-4">
+              Status
+            </TableHead>
             <TableHead />
           </TableRow>
         </TableHeader>
@@ -72,8 +91,21 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
               <TableRow key={project.id}>
-                <TableCell className="text-xl">{project.name}</TableCell>
+                <TableCell className="text-xl">{project.name} </TableCell>
                 <TableCell className="text-xl">{project.description}</TableCell>
+                <TableCell className="text-xl">
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                      project.status === "Archived"
+                        ? "bg-gray-200 text-gray-700"
+                        : project.status === "Active"
+                        ? "bg-green-200 text-green-800"
+                        : "bg-blue-200 text-blue-800"
+                    }`}
+                  >
+                    {project.status}
+                  </span>
+                </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -90,7 +122,9 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
                       >
                         Edit
                       </DropdownMenuItem>
-                      <DropdownMenuItem>Archive</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => onArchive(project)}>
+                        Archive
+                      </DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-red-600"
                         onClick={() => onDelete(project.id)}

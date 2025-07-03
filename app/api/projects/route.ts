@@ -14,7 +14,6 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const statusFilter = searchParams.get("statusFilter") || "All";
 
-  // Validate that status is one of the allowed values
   const allowedStatuses = ["All", "Active", "Archived", "Completed"];
   if (!allowedStatuses.includes(statusFilter)) {
     return new NextResponse("Invalid status filter", { status: 400 });

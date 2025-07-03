@@ -14,7 +14,7 @@ export async function PATCH(
 
   const projectId = params.id;
   const body = await req.json();
-  const { name, description } = body;
+  const { name, description, status } = body;
 
   if (!name || name.trim() === "") {
     return new NextResponse("Name is required", { status: 400 });
