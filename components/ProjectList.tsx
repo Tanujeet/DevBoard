@@ -52,6 +52,7 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
 
   const onArchive = async (project: Project) => {
     try {
+      console.log("Archiving project:", project);
       if (project.status !== "Archived") {
         await axiosInstance.patch(`/projects/${project.id}`, {
           name: project.name,

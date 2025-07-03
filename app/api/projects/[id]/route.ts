@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { ProjectStatus } from "@prisma/client";
 
 export async function PATCH(
   req: Request,
@@ -19,13 +20,14 @@ export async function PATCH(
   if (!name || name.trim() === "") {
     return new NextResponse("Name is required", { status: 400 });
   }
+  console.log("Incoming status:", status); // 👀 Check kya aa raha
 
   const updatedProject = await prisma.project.update({
     where: { id: projectId, userId },
     data: {
       name,
       description,
-      status: "Archived",
+      status: status as ProjectStatus,
     },
   });
 
@@ -51,5 +53,8 @@ export async function DELETE(
     where: { id: projectId, userId: userId },
   });
 
-  return NextResponse.json({ message: "Project deleted succesfully" });
+  return NextResponse.json({
+    message: "Project deleted succesfully",
+    deleteProject,
+  });
 }

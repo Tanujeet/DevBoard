@@ -9,13 +9,13 @@ datasource db {
 }
 
 model Task {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
-  status      String   
+  status      String
   dueDate     DateTime?
   description String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   userId    String
   projectId String?
@@ -30,17 +30,15 @@ enum ProjectStatus {
   Completed
 }
 
-
-
 model Project {
-  id          String   @id @default(uuid())
+  id          String        @id @default(uuid())
   name        String
   description String?
-  status       ProjectStatus   @default(Active)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  userId String
-  tasks  Task[]
+  status      ProjectStatus @default(Active)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  userId      String
+  tasks       Task[]
 }
 
 model PomodoroSession {
