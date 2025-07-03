@@ -42,7 +42,7 @@ const ProjectForm = ({open ,setOpen,project,onUpdate}:ProjectFormProps) => {
     const handleSubmit = () => {
       if (!project) return;
 
-      console.log("Updating project:", { ...project, name, description }); // ✅ debug
+      console.log("Updating project:", { ...project, name, description }); 
 
       onUpdate({ ...project, name, description });
       setOpen(false);
