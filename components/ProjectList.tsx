@@ -18,20 +18,22 @@ import { useState } from "react";
 import { useProjectStore } from "@/store/projectstore";
 import { MoreVertical } from "lucide-react";
 import { axiosInstance } from "@/lib/axios";
-import ProjectForm from "@/components/ProjectForm"; // 👈 import it
+import ProjectForm from "@/components/ProjectForm";
+import { filterProjects } from "@/lib/utils";
+import { Project } from "@/type/project";
+type Props = {
+  searchQuery: string;
+  statusFilter: string;
+};
 
-const ProjectList = () => {
-  type Project = {
-    id: string;
-    name: string;
-    description: string;
-  };
-
-  const [viewMode, setViewMode] = useState("list");
+const ProjectList = ({ searchQuery }: Props) => {
   const [formOpen, setFormOpen] = useState(false);
+
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   const { fetchRecentProjects, recentProjects } = useProjectStore();
+
+  const filteredProjects = filterProjects(recentProjects, searchQuery);
 
   const onDelete = async (projectId: string) => {
     try {
@@ -60,59 +62,55 @@ const ProjectList = () => {
             <TableHead />
           </TableRow>
         </TableHeader>
+
         <TableBody>
-          {recentProjects.length > 0 ? (
-            recentProjects.map((project) => (
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project) => (
               <TableRow key={project.id}>
                 <TableCell>{project.name}</TableCell>
                 <TableCell>{project.description}</TableCell>
                 <TableCell className="text-right">
-                  <div className="relative">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="p-2 rounded-full hover:bg-muted">
-                          <MoreVertical className="h-5 w-5" />
-                        </button>
-                      </DropdownMenuTrigger>
-
-                      <DropdownMenuContent className="w-32" align="end">
-                        <DropdownMenuItem
-                          onClick={() => {
-                            setSelectedProject(project);
-                            setFormOpen(true);
-                          }}
-                        >
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          className="text-red-600"
-                          onClick={() => onDelete(project.id)}
-                        >
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-2 rounded-full hover:bg-muted">
+                        <MoreVertical className="h-5 w-5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-32" align="end">
+                      <DropdownMenuItem
+                        onClick={() => {
+                          setSelectedProject(project);
+                          setFormOpen(true);
+                        }}
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-red-600"
+                        onClick={() => onDelete(project.id)}
+                      >
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </TableCell>
               </TableRow>
             ))
           ) : (
             <TableRow>
               <TableCell colSpan={3} className="text-center text-gray-500 py-4">
-                No recent projects found.
+                No matching projects.
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
 
-      {/* ✅ Render the form modal here */}
       <ProjectForm
         open={formOpen}
         setOpen={setFormOpen}
         project={selectedProject}
         onUpdate={async (updatedProject) => {
-          console.log("Sending PUT for:", updatedProject); // ✅ debug
           try {
             const res = await axiosInstance.patch(
               `/projects/${updatedProject.id}`,
@@ -121,10 +119,9 @@ const ProjectList = () => {
                 description: updatedProject.description,
               }
             );
-            console.log("PUT response:", res.data); // ✅ debug
             await fetchRecentProjects();
           } catch (err) {
-            console.error("Failed to update project", err); // ✅ check error
+            console.error("Failed to update project", err);
           }
         }}
       />
