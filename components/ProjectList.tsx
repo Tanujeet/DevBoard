@@ -66,8 +66,8 @@ const ProjectList = ({ searchQuery }: Props) => {
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => (
               <TableRow key={project.id}>
-                <TableCell>{project.name}</TableCell>
-                <TableCell>{project.description}</TableCell>
+                <TableCell className="text-xl">{project.name}</TableCell>
+                <TableCell className="text-xl">{project.description}</TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -84,6 +84,7 @@ const ProjectList = ({ searchQuery }: Props) => {
                       >
                         Edit
                       </DropdownMenuItem>
+                      <DropdownMenuItem>Archive</DropdownMenuItem>
                       <DropdownMenuItem
                         className="text-red-600"
                         onClick={() => onDelete(project.id)}

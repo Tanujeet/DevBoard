@@ -2,7 +2,7 @@
 
 import AddProject from "@/components/AddProject";
 
-import { Search } from "lucide-react";
+
 import { useEffect, useState } from "react";
 
 import { useProjectStore } from "@/store/projectstore";
@@ -28,13 +28,13 @@ const page = () => {
       <SearchFilter searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
 
       <section className="flex items-center space-x-4">
-        <button className="border border-black rounded-2xl px-4 py-2 hover:bg-black hover:text-white transition">
+        <button className="border border-black rounded-2xl px-4 py-2   bg-black text-white   hover:bg-white hover:text-black transition">
           All Projects
         </button>
-        <button className="border border-black rounded-2xl px-4 py-2 hover:bg-black hover:text-white transition">
+        <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-black transition">
           Active
         </button>
-        <button className="border border-black rounded-2xl px-4 py-2 hover:bg-black hover:text-white transition">
+        <button className="border border-black rounded-2xl px-4 py-2  bg-black text-white   hover:bg-white hover:text-blacke transition">
           Archived
         </button>
       </section>

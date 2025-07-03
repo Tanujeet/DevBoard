@@ -3,7 +3,6 @@
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -46,7 +45,7 @@ const AddProject = () => {
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <button className="border border-black rounded-2xl p-2  hover:bg-black hover:text-white transition">
+          <button className="border border-black rounded-2xl p-2   bg-black text-white   hover:bg-white hover:text-black transition">
             Add Project
           </button>
         </DialogTrigger>
