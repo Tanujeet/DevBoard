@@ -1,149 +1,86 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+"use client";
+
+import React, { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-const formSchema = z.object({
-  taskName: z.string().min(1, "Task name is required"),
-  status: z.enum(["To Do", "In Progress", "Completed"]),
-  dueDate: z.string().min(1, "Due date is required"),
-});
+import { axiosInstance } from "@/lib/axios";
+import { useProjectStore } from "@/store/projectstore";
 
-type TaskFormValues = z.infer<typeof formSchema>;
+const AddProject = () => {
+  const [open, setOpen] = useState(false);
+  const [projectName, setProjectName] = useState("");
+  const [description, setDescription] = useState("");
+  const { fetchRecentProjects } = useProjectStore();
 
-// Define the type for the data that onSubmitSuccess expects
-interface TaskSubmissionPayload {
-  title: string;
-  status: "To Do" | "In Progress" | "Completed";
-  dueDate: string;
-}
-
-// Define the props for the TaskForm component
-interface TaskFormProps {
-  // onSubmitSuccess is a function that takes TaskSubmissionPayload and returns void or a Promise<void>
-  onSubmitSuccess: (data: TaskSubmissionPayload) => void | Promise<void>;
-}
-
-const TaskForm = ({ onSubmitSuccess }: TaskFormProps) => {
-  // <-- FIX APPLIED HERE
-  const form = useForm<TaskFormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      taskName: "",
-      status: "To Do",
-      dueDate: "",
-    },
-  });
-
-  const handleSubmit = async (data: TaskFormValues) => {
-    try {
-      const payload: TaskSubmissionPayload = {
-        // Explicitly type payload
-        title: data.taskName,
-        status: data.status,
-        dueDate: data.dueDate,
-      };
-      await onSubmitSuccess(payload); // Call the prop function
-      form.reset(); // Reset form fields after successful submission
-    } catch (error) {
-      console.error("Failed to submit task form:", error);
-    }
+  const handlenewProject = async (ProjectType: {
+    name: string;
+    description: string;
+  }) => {
+    const handleSubmit = async () => {
+      try {
+        await axiosInstance.post("projects", ProjectType);
+        console.log("Project created successfully");
+        await fetchRecentProjects();
+        setOpen(false);
+        setProjectName("");
+        setDescription("");
+      } catch (err) {
+        console.log("Failed to create new task", err);
+      }
+    };
   };
 
   return (
-    <section className="mb-12">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold">My Tasks</h1>
-        <p className="text-muted-foreground">
-          Manage your tasks and stay productive
-        </p>
-      </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-          {/* Task Name */}
-          <FormField
-            control={form.control}
-            name="taskName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Task Name</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter task name" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Status Dropdown */}
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="To Do">To Do</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Due Date */}
-          <FormField
-            control={form.control}
-            name="dueDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Due Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <Button
-            type="submit"
-            className="hover:bg-white hover:text-black hover:border border-black"
-          >
-            Add Task
-          </Button>
-        </form>
-      </Form>
-    </section>
+    <div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <button className="border border-black rounded-2xl p-2   bg-black text-white   hover:bg-white hover:text-black transition">
+            Add Project
+          </button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>New Project</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <input
+              type="text"
+              placeholder="Enter your project name"
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-2"
+            />
+            <input
+              type="text"
+              placeholder="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className="w-full border border-gray-300 rounded-md px-4 py-2"
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              onClick={() =>
+                handlenewProject({
+                  name: projectName,
+                  description: description,
+                })
+              }
+            >
+              Save
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
-
-export default TaskForm;
+export default AddProject;

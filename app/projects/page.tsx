@@ -28,7 +28,7 @@ const Page = () => {
     <main className="max-w-4xl mx-auto p-6 space-y-6">
       <section className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Projects</h1>
-        <AddProject onSubmitSuccess={handleProjectAddSuccess} />
+        <AddProject />
       </section>
 
       <SearchFilter searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
