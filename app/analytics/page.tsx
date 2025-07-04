@@ -1,5 +1,6 @@
 "use client";
 
+import TaskHiveLoader from "@/components/Loader";
 import { Card, CardContent } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios";
 import { useEffect, useState } from "react";
@@ -15,7 +16,12 @@ const page = () => {
     fetchAnalytics();
   }, []);
 
-  if (!stats) return <div>Loading ....</div>;
+  if (!stats)
+    return (
+      <div>
+        <TaskHiveLoader />
+      </div>
+    );
 
   const cards = [
     { label: "Total Tasks", value: stats.totalTask },
@@ -23,7 +29,9 @@ const page = () => {
     { label: "Active Tasks", value: stats.activeTask },
     { label: "Total Projects", value: stats.totalProject },
     { label: "Ongoing Projects", value: stats.activeProject },
-    { label: "Archived Projects", value: stats.arhcivedProject },
+    { label: "Archived Projects", value: stats.archivedProject },
+    { label: "Total Focus Time", value: stats.totalFocusTime },
+    { label: "Pomodoro Sessions", value: stats.pomodoroSession },
   ];
 
   return (
