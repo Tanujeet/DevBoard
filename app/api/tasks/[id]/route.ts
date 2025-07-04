@@ -4,13 +4,16 @@ import { NextResponse } from "next/server";
 
 
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: Request,
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
+) {
   const { userId } = await auth();
   if (!userId) return new NextResponse("Unauthorized", { status: 401 });
 
   const body = await req.json();
   const { title, status, dueDate } = body;
-
+  const { id: taskId } = await paramsPromise;
   // Validate inputs
   if (!title || !status) {
     return new NextResponse("Title and status required", { status: 400 });
@@ -24,7 +27,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   try {
     const updatedTask = await prisma.task.update({
       where: {
-        id: params.id,
+        id: taskId,
         userId,
       },
       data: {
@@ -41,16 +44,15 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = await auth();
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
-  const taskId = params.id;
+  const { id: taskId } = await paramsPromise;
   try {
     const deleleTask = await prisma.task.delete({
       where: { id: taskId, userId },

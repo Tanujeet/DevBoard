@@ -5,7 +5,7 @@ import { ProjectStatus } from "@prisma/client";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = await auth();
 
@@ -13,7 +13,7 @@ export async function PATCH(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const projectId = params.id;
+  const { id: projectId } = await paramsPromise;
   const body = await req.json();
   const { name, description, status } = body;
 
@@ -39,7 +39,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } }
+  { params: paramsPromise }: { params: Promise<{ id: string }> }
 ) {
   const { userId } = await auth();
 
@@ -47,7 +47,7 @@ export async function DELETE(
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const projectId = params.id;
+  const { id: projectId } = await paramsPromise;
 
   const deleteProject = await prisma.project.delete({
     where: { id: projectId, userId: userId },
