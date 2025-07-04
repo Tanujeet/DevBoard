@@ -36,10 +36,7 @@ export async function PATCH(
   });
 }
 
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE({ params }: { params: { id: string } }) {
   const { userId } = await auth();
   if (!userId) {
     return new NextResponse("Unauthorised", { status: 404 });
