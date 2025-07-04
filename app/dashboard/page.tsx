@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { axiosInstance } from "@/lib/axios";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { PlayCircle } from "lucide-react";
+
 import PomodoroWidget from "@/components/Pomodoro";
 
 export default function DashboardPage() {
