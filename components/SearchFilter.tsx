@@ -1,8 +1,14 @@
 import { Search } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { debounce } from "lodash";
+import React from "react";
 
-const SearchFilter = ({ searchQuery, setSearchQuery }: any) => {
+interface SearchFilterProps {
+  searchQuery: string;
+  setSearchQuery: (query: string) => void;
+}
+
+const SearchFilter = ({ searchQuery, setSearchQuery }: SearchFilterProps) => {
   const debouncedSetSearchQuery = useMemo(
     () => debounce(setSearchQuery, 500),
     [setSearchQuery]

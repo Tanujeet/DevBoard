@@ -59,6 +59,7 @@ export async function DELETE(
     });
     return NextResponse.json({ message: "Task deleted", task: deleleTask });
   } catch (error) {
+    console.log(error);
     return new NextResponse("Task not found", { status: 404 });
   }
 }

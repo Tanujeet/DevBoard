@@ -14,10 +14,7 @@ import { axiosInstance } from "@/lib/axios";
 import { useProjectStore } from "@/store/projectstore";
 
 const AddProject = () => {
-  type ProjectType = {
-    name: string;
-    descrption: string;
-  };
+
 
   const [open, setOpen] = useState(false);
   const [projectName, setProjectName] = useState("");

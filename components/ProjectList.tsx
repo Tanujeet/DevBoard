@@ -21,7 +21,7 @@ import { axiosInstance } from "@/lib/axios";
 import ProjectForm from "@/components/ProjectForm";
 import { filterProjects } from "@/lib/utils";
 import { Project } from "@/type/project";
-import { tr } from "zod/v4/locales";
+
 
 type Props = {
   searchQuery: string;
@@ -161,13 +161,10 @@ const ProjectList = ({ searchQuery, statusFilter }: Props) => {
         project={selectedProject}
         onUpdate={async (updatedProject) => {
           try {
-            const res = await axiosInstance.patch(
-              `/projects/${updatedProject.id}`,
-              {
-                name: updatedProject.name,
-                description: updatedProject.description,
-              }
-            );
+            await axiosInstance.patch(`/projects/${updatedProject.id}`, {
+              name: updatedProject.name,
+              description: updatedProject.description,
+            });
             await fetchRecentProjects();
           } catch (err) {
             console.error("Failed to update project", err);
