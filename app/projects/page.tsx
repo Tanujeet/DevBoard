@@ -9,7 +9,7 @@ import { useProjectStore } from "@/store/projectstore";
 import ProjectList from "@/components/ProjectList";
 import SearchFilter from "@/components/SearchFilter";
 
-const page = () => {
+const Page = () => {
   const { fetchRecentProjects } = useProjectStore();
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -67,4 +67,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

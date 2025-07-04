@@ -38,8 +38,8 @@ export async function PATCH(
     });
 
     return NextResponse.json({ task: updatedTask });
-  } catch (error) {
-    console.error("PATCH ERROR:", error);
+  } catch (err) {
+    console.log("PATCH ERROR:", err);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -58,8 +58,8 @@ export async function DELETE(
       where: { id: taskId, userId },
     });
     return NextResponse.json({ message: "Task deleted", task: deleleTask });
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
     return new NextResponse("Task not found", { status: 404 });
   }
 }

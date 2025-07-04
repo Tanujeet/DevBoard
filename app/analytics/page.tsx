@@ -14,7 +14,7 @@ interface AnalyticsStats {
   totalFocusTime: number;
   pomodoroSession: number;
 }
-const page = () => {
+const Page = () => {
   const [stats, setStats] = useState<AnalyticsStats | null>(null);
 
   useEffect(() => {
@@ -73,4 +73,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

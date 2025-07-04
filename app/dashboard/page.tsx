@@ -7,23 +7,58 @@ import { Badge } from "@/components/ui/badge";
 
 import PomodoroWidget from "@/components/Pomodoro";
 
+// Define interface for analytics stats data
+interface DashboardStats {
+  totalTask: number;
+  completedTask: number;
+  totalFocusTime: number; // Assuming this comes as a number (e.g., minutes) from API
+  pomodoroSession: number;
+}
+
+// Define interface for a single task item from the API response
+interface ApiTask {
+  id: string;
+  title: string;
+  status: string; // Or specific literals: "pending" | "in-progress" | "completed"
+  createdAt: string; // ISO 8601 date string
+  // Add other properties if your API returns them and you use them
+}
+
+// Define interface for a single project item from the API response
+interface ApiProject {
+  id: string;
+  name: string; // Assuming 'name' is the field for project title
+  status: string; // Or specific literals: "All" | "Active" | "Archived" | "Completed"
+  createdAt: string; // ISO 8601 date string
+  // Add other properties if your API returns them and you use them
+}
+
+// Define interface for the combined activity item displayed in the feed
+interface ActivityItem {
+  id: string;
+  title: string;
+  status: string;
+  createdAt: string;
+  type: "Task" | "Project"; // This is the key literal type
+}
+
 export default function DashboardPage() {
   const { user } = useUser();
   const userName = user?.firstName || "Developer";
 
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<DashboardStats>({
     totalTask: 0,
     completedTask: 0,
-    totalFocusTime: "0h 0m",
+    totalFocusTime: 0,
     pomodoroSession: 0,
   });
 
-  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = useState<ActivityItem[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axiosInstance.get("/analytics");
+        const res = await axiosInstance.get<DashboardStats>("/analytics");
         setStats(res.data);
       } catch (error) {
         console.log("Failed to fetch analytics", error);
@@ -36,25 +71,31 @@ export default function DashboardPage() {
     const fetchRecentActivity = async () => {
       try {
         const [taskRes, projectRes] = await Promise.all([
-          axiosInstance.get("/tasks"),
-          axiosInstance.get("/projects"),
+          axiosInstance.get<{ tasks: ApiTask[] }>("/tasks"),
+          axiosInstance.get<{ projects: ApiProject[] }>("/projects"),
         ]);
 
-        const tasks = taskRes.data.tasks.map((task: any) => ({
-          id: task.id,
-          title: task.title,
-          status: task.status,
-          createdAt: task.createdAt,
-          type: "Task",
-        }));
+        // Explicitly type the mapped object to ActivityItem
+        const tasks: ActivityItem[] = taskRes.data.tasks.map(
+          (task: ApiTask): ActivityItem => ({
+            id: task.id,
+            title: task.title,
+            status: task.status,
+            createdAt: task.createdAt,
+            type: "Task", // This literal "Task" is compatible with "Task" | "Project"
+          })
+        );
 
-        const projects = projectRes.data.projects.map((project: any) => ({
-          id: project.id,
-          title: project.name,
-          status: project.status,
-          createdAt: project.createdAt,
-          type: "Project",
-        }));
+        // Explicitly type the mapped object to ActivityItem
+        const projects: ActivityItem[] = projectRes.data.projects.map(
+          (project: ApiProject): ActivityItem => ({
+            id: project.id,
+            title: project.name, // Use project.name for title
+            status: project.status,
+            createdAt: project.createdAt,
+            type: "Project", // This literal "Project" is compatible with "Task" | "Project"
+          })
+        );
 
         const merged = [...tasks, ...projects].sort(
           (a, b) =>
@@ -68,6 +109,13 @@ export default function DashboardPage() {
     };
     fetchRecentActivity();
   }, []);
+
+  // Helper function to format focus time
+  const formatFocusTime = (minutes: number): string => {
+    const hours = Math.floor(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return `${hours}h ${remainingMinutes}m`;
+  };
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
@@ -84,7 +132,7 @@ export default function DashboardPage() {
           { label: "Total Tasks", value: stats.totalTask },
           { label: "Completed Tasks", value: stats.completedTask },
           { label: "Pomodoro Sessions", value: stats.pomodoroSession },
-          { label: "Focus Time", value: stats.totalFocusTime },
+          { label: "Focus Time", value: formatFocusTime(stats.totalFocusTime) },
         ].map((item, idx) => (
           <div
             key={idx}
