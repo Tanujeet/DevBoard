@@ -62,5 +62,6 @@ export async function DELETE(
   });
   return NextResponse.json({
     message: "Pomodoro session deleted successfully",
+    deleteSession,
   });
 }
