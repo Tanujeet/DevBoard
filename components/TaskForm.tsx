@@ -28,8 +28,13 @@ const formSchema = z.object({
   dueDate: z.string().min(1, "Due date is required"),
 });
 
-const TaskForm = ({ onSubmitSuccess }: { onSubmitSuccess :any}) => {
-  const form = useForm({
+// 1. Infer the type directly from your Zod schema
+type TaskFormValues = z.infer<typeof formSchema>;
+
+const TaskForm = ({ onSubmitSuccess }: { onSubmitSuccess: any }) => {
+  // 2. Pass the inferred type to useForm as a generic argument
+  const form = useForm<TaskFormValues>({
+    // <-- FIX IS HERE
     resolver: zodResolver(formSchema),
     defaultValues: {
       taskName: "",
@@ -38,7 +43,8 @@ const TaskForm = ({ onSubmitSuccess }: { onSubmitSuccess :any}) => {
     },
   });
 
-  const handleSubmit = async (data:any) => {
+  const handleSubmit = async (data: TaskFormValues) => {
+    // Use TaskFormValues here for type safety
     try {
       const payload = {
         title: data.taskName,
