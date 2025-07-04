@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function PATCH(
   req: Request,
@@ -36,30 +36,3 @@ export async function PATCH(
   });
 }
 
-export async function DELETE({ params }: { params: { id: string } }) {
-  const { userId } = await auth();
-  if (!userId) {
-    return new NextResponse("Unauthorised", { status: 404 });
-  }
-
-  const pomoId = params.id;
-
-  const session = await prisma.pomodoroSession.findFirst({
-    where: {
-      id: pomoId,
-      userId: userId,
-    },
-  });
-
-  if (!session) {
-    return new NextResponse("Pomodoro not found", { status: 404 });
-  }
-
-  const deleteSession = await prisma.pomodoroSession.delete({
-    where: { id: pomoId },
-  });
-  return NextResponse.json({
-    message: "Pomodoro session deleted successfully",
-    deleteSession,
-  });
-}
