@@ -58,10 +58,3 @@ export async function GET() {
     totalFocusTime: formattedTime,
   });
 }
-  
-
-
-
-
-
-
