@@ -1,138 +1,130 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { axiosInstance } from "@/lib/axios";
-import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { PlayCircle } from "lucide-react";
+import PomodoroWidget from "@/components/Pomodoro";
 
-const page = () => {
-  const [stats, setstats] = useState({
-    totalTasks: 0,
-    totalProjects: 0,
-    totalMinutes: 0,
-  });
-
-  type Task = {
-    id: string;
-    title: string;
-    status: string;
-    createdAt: string;
-  };
-
-  const [recentTasks, setRecentTasks] = useState<Task[]>([]);
-
-  useEffect(() => {
-    const fetchSummary = async () => {
-      try {
-        const res = await axiosInstance.get("/summary");
-
-        setstats(res.data);
-      } catch (error) {
-        console.log("failed to fetch sumamry", error);
-      }
-    };
-    fetchSummary();
-  }, []);
-
-  useEffect(() => {
-    const fetchRecentTask = async () => {
-      try {
-        const res = await axiosInstance.get("tasks");
-        setRecentTasks(res.data.tasks);
-      } catch (error) {
-        console.log("Failed to fetch task", error);
-      }
-    };
-    fetchRecentTask();
-  }, []);
-
-  const cards = [
-    { title: "Total Tasks", value: stats.totalTasks },
-    { title: "Total Projects", value: stats.totalProjects },
-    { title: "Pomodoro Minutes", value: stats.totalMinutes },
-  ];
-
+export default function DashboardPage() {
   const { user } = useUser();
   const userName = user?.firstName || "Developer";
-  return (
-    <main className="max-w-6xl mx-auto px-4">
-      <div className="text-center text-3xl sm:text-4xl space-y-8 p-6">
-        <h2>
-          Hi {userName}, Ready to Crush <br /> tasks today?
-        </h2>
 
-        {/* Card Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 justify-center">
-          {cards.map((card, index) => (
-            <div
-              key={index}
-              className="w-full max-w-[220px] aspect-square mx-auto"
-            >
-              <StaticCard title={card.title} value={card.value} />
-            </div>
-          ))}
-        </div>
+  const [stats, setStats] = useState({
+    totalTask: 0,
+    completedTask: 0,
+    totalFocusTime: "0h 0m",
+    pomodoroSession: 0,
+  });
+
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axiosInstance.get("/analytics");
+        setStats(res.data);
+      } catch (error) {
+        console.log("Failed to fetch analytics", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchRecentActivity = async () => {
+      try {
+        const [taskRes, projectRes] = await Promise.all([
+          axiosInstance.get("/tasks"),
+          axiosInstance.get("/projects"),
+        ]);
+
+        const tasks = taskRes.data.tasks.map((task: any) => ({
+          id: task.id,
+          title: task.title,
+          status: task.status,
+          createdAt: task.createdAt,
+          type: "Task",
+        }));
+
+        const projects = projectRes.data.projects.map((project: any) => ({
+          id: project.id,
+          title: project.name,
+          status: project.status,
+          createdAt: project.createdAt,
+          type: "Project",
+        }));
+
+        const merged = [...tasks, ...projects].sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        setRecentActivity(merged);
+      } catch (error) {
+        console.log("Failed to fetch activity", error);
+      }
+    };
+    fetchRecentActivity();
+  }, []);
+
+  return (
+    <main className="max-w-6xl mx-auto px-4 py-8 space-y-10">
+      <div>
+        <h2 className="text-3xl font-bold">Welcome back, {userName} 👋</h2>
+        <p className="text-muted-foreground mt-2">
+          Here’s your productivity snapshot
+        </p>
       </div>
 
-      <section className="mt-10">
-        <div className="text-2xl font-semibold mb-4 pl-2 sm:pl-4">
-          Recent Task
-        </div>
-
-        <Table className="w-full border border-gray-300 rounded-lg overflow-hidden">
-          <TableHeader>
-            <TableRow className="bg-gray-100">
-              <TableHead className="text-xl font-semibold text-left p-4">
-                Task Name
-              </TableHead>
-              <TableHead className="text-xl font-semibold text-left p-4">
-                Status
-              </TableHead>
-              <TableHead className="text-xl font-semibold text-left p-4">
-                Due
-              </TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {recentTasks.map((task, idx) => (
-              <TableRow key={task.id || idx}>
-                <TableCell>{task.title}</TableCell>
-                <TableCell>{task.status}</TableCell>
-                <TableCell>{formatDate(task.createdAt)}</TableCell>
-              </TableRow>
-            ))}
-            {recentTasks.length === 0 && (
-              <TableRow>
-                <TableCell
-                  colSpan={3}
-                  className="text-center text-gray-500 py-4"
-                >
-                  No recent tasks found.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+      {/* Snapshot Section */}
+      <section className="flex overflow-x-auto gap-4 pb-4">
+        {[
+          { label: "Total Tasks", value: stats.totalTask },
+          { label: "Completed Tasks", value: stats.completedTask },
+          { label: "Pomodoro Sessions", value: stats.pomodoroSession },
+          { label: "Focus Time", value: stats.totalFocusTime },
+        ].map((item, idx) => (
+          <div
+            key={idx}
+            className="min-w-[180px] bg-muted/50 rounded-xl p-4 shadow hover:shadow-lg transition"
+          >
+            <p className="text-muted-foreground text-sm">{item.label}</p>
+            <h3 className="text-2xl font-semibold mt-2">{item.value}</h3>
+          </div>
+        ))}
       </section>
+
+      {/* Recent Activity Feed */}
+      <section>
+        <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
+        <div className="space-y-4">
+          {recentActivity.length > 0 ? (
+            recentActivity.slice(0, 6).map((item) => (
+              <div
+                key={item.id}
+                className="flex justify-between items-center border p-4 rounded-xl"
+              >
+                <div>
+                  <p className="font-medium">{item.title}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {item.type} •{" "}
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <Badge variant="outline">{item.status}</Badge>
+              </div>
+            ))
+          ) : (
+            <p className="text-muted-foreground">No recent activity found.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Pomodoro Widget */}
+      <PomodoroWidget />
     </main>
   );
-};
-
-const StaticCard = ({ title, value }: { title: string; value: number }) => {
-  return (
-    <div className="rounded-xl p-4 border border-black hover:bg-black hover:text-white transition">
-      <p className="text-sm">{title}</p>
-      <h2 className="text-2xl font bold">{value}</h2>
-    </div>
-  );
-};
-export default page;
+}

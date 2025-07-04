@@ -34,3 +34,60 @@ export function filterProjects(
     return matchesSearch && matchesStatus;
   });
 }
+
+
+
+// utils/pomodoro.ts
+import { useState, useEffect } from "react";
+
+export function usePomodoroTimer(durationInMinutes = 25) {
+  const initialTime = durationInMinutes * 60;
+
+  const [timeLeft, setTimeLeft] = useState(initialTime);
+  const [isRunning, setIsRunning] = useState(false);
+  const [startTime, setStartTime] = useState<Date | null>(null);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isRunning && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    }
+
+    if (timeLeft === 0 && isRunning) {
+      setIsRunning(false);
+    }
+
+    return () => clearInterval(interval);
+  }, [isRunning, timeLeft]);
+
+  const start = () => {
+    if (!isRunning) setStartTime(new Date());
+    setIsRunning(true);
+  };
+
+  const pause = () => setIsRunning(false);
+
+  const reset = () => {
+    setTimeLeft(initialTime);
+    setIsRunning(false);
+    setStartTime(null);
+  };
+
+  const isComplete = timeLeft === 0;
+
+  const formattedTime = `${String(Math.floor(timeLeft / 60)).padStart(2, "0")}:${String(timeLeft % 60).padStart(2, "0")}`;
+
+  return {
+    timeLeft,
+    isRunning,
+    isComplete,
+    formattedTime,
+    start,
+    pause,
+    reset,
+    startTime,
+  };
+}
