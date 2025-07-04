@@ -4,14 +4,23 @@ import TaskHiveLoader from "@/components/Loader";
 import { Card, CardContent } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios";
 import { useEffect, useState } from "react";
-
+interface AnalyticsStats {
+  totalTask: number;
+  completedTask: number;
+  activeTask: number;
+  totalProject: number;
+  activeProject: number;
+  archivedProject: number;
+  totalFocusTime: number;
+  pomodoroSession: number;
+}
 const page = () => {
-  const [stats, setstats] = useState<any>(null);
+  const [stats, setStats] = useState<AnalyticsStats | null>(null);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       const res = await axiosInstance.get("analytics");
-      setstats(res.data);
+      setStats(res.data);
     };
     fetchAnalytics();
   }, []);

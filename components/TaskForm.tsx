@@ -1,4 +1,3 @@
-// components/TaskForm.jsx
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,18 +20,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Define the form schema
 const formSchema = z.object({
   taskName: z.string().min(1, "Task name is required"),
   status: z.enum(["To Do", "In Progress", "Completed"]),
   dueDate: z.string().min(1, "Due date is required"),
 });
 
-// 1. Infer the type directly from your Zod schema
 type TaskFormValues = z.infer<typeof formSchema>;
 
 const TaskForm = ({ onSubmitSuccess }: { onSubmitSuccess: any }) => {
-  // 2. Pass the inferred type to useForm as a generic argument
   const form = useForm<TaskFormValues>({
     // <-- FIX IS HERE
     resolver: zodResolver(formSchema),
