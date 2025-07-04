@@ -19,12 +19,16 @@ const Page = () => {
   useEffect(() => {
     fetchRecentProjects();
   }, [fetchRecentProjects]);
+  const handleProjectAddSuccess = async () => {
+    await fetchRecentProjects(); // Re-fetch projects to update the list
+    // Optionally: show a success toast message
+  };
 
   return (
     <main className="max-w-4xl mx-auto p-6 space-y-6">
       <section className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Projects</h1>
-        <AddProject />
+        <AddProject onSubmitSuccess={handleProjectAddSuccess} />
       </section>
 
       <SearchFilter searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
