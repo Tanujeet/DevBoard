@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -16,10 +15,11 @@ import { formatDate } from "@/lib/utils";
 
 const page = () => {
   const [stats, setstats] = useState({
-    totaltask: 0,
-    Completed: 0,
-    PomodoroMinutes: 0,
+    totalTasks: 0,
+    totalProjects: 0,
+    totalMinutes: 0,
   });
+
   type Task = {
     id: string;
     title: string;
@@ -32,7 +32,8 @@ const page = () => {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        const res = await axiosInstance.get("/pomodara/summary");
+        const res = await axiosInstance.get("/summary");
+
         setstats(res.data);
       } catch (error) {
         console.log("failed to fetch sumamry", error);
@@ -54,9 +55,9 @@ const page = () => {
   }, []);
 
   const cards = [
-    { title: "Total Task", value: stats.totaltask },
-    { title: "Completed", value: stats.Completed },
-    { title: "Pomodoro Minutes", value: stats.PomodoroMinutes },
+    { title: "Total Tasks", value: stats.totalTasks },
+    { title: "Total Projects", value: stats.totalProjects },
+    { title: "Pomodoro Minutes", value: stats.totalMinutes },
   ];
 
   const { user } = useUser();
