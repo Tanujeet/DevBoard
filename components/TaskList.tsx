@@ -53,13 +53,25 @@ const TaskList = ({
         return "";
     }
   };
+  const mapEnumToStatus = (status: string) => {
+    switch (status) {
+      case "TODO":
+        return "pending";
+      case "IN_PROGRESS":
+        return "in-progress";
+      case "COMPLETED":
+        return "completed";
+      default:
+        return "";
+    }
+  };
 
   const handleEditClick = (task: Task) => {
     setEditingTask(task);
     setFormData({
       title: task.title || "",
       dueDate: task.dueDate || "",
-      status: task.status || "",
+      status: mapEnumToStatus(task.status),
     });
   };
 
