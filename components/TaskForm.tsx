@@ -21,9 +21,12 @@ import {
 } from "@/components/ui/select";
 
 
+// components/TaskForm.tsx
+
 const formSchema = z.object({
   taskName: z.string().min(1, "Task name is required"),
-  status: z.enum(["To Do", "In Progress", "Completed"]),
+
+  status: z.enum(["TODO", "IN_PROGRESS", "COMPLETED"]), 
   dueDate: z.string().min(1, "Due date is required"),
 });
 
@@ -31,7 +34,8 @@ type TaskFormValues = z.infer<typeof formSchema>;
 
 interface TaskSubmissionPayload {
   title: string;
-  status: "To Do" | "In Progress" | "Completed";
+ 
+  status: "TODO" | "IN_PROGRESS" | "COMPLETED"; 
   dueDate: string;
 }
 interface TaskFormProps {
@@ -43,7 +47,7 @@ const TaskForm = ({ onSubmitSuccess }: TaskFormProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       taskName: "",
-      status: "To Do",
+      status: "TODO",
       dueDate: "",
     },
   });
