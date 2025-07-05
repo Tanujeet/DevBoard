@@ -41,6 +41,18 @@ const TaskList = ({
     dueDate: "",
     status: "",
   });
+  const mapStatusToEnum = (status: string): string => {
+    switch (status) {
+      case "pending":
+        return "TODO";
+      case "in-progress":
+        return "IN_PROGRESS";
+      case "completed":
+        return "COMPLETED";
+      default:
+        return "";
+    }
+  };
 
   const handleEditClick = (task: Task) => {
     setEditingTask(task);
@@ -71,7 +83,7 @@ const TaskList = ({
     try {
       await axiosInstance.patch(`/tasks/${editingTask.id}`, {
         title: formData.title,
-        status: formData.status,
+        status: mapStatusToEnum(formData.status),
         dueDate: formData.dueDate || null,
       });
 
