@@ -1,5 +1,5 @@
-import type { PrismaClient } from "../lib/generated/prisma"; // ✅ type-only import
-const { PrismaClient } = require("../lib/generated/prisma");
+import type { PrismaClient } from "@prisma/client"; // ✅ default path
+const { PrismaClient } = require("@prisma/client"); // ✅ runtime-safe for Vercel
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
