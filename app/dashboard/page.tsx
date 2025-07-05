@@ -7,24 +7,21 @@ import { Badge } from "@/components/ui/badge";
 
 import PomodoroWidget from "@/components/Pomodoro";
 
-// Define interface for analytics stats data
+
 interface DashboardStats {
   totalTask: number;
   completedTask: number;
-  totalFocusTime: number; // Assuming this comes as a number (e.g., minutes) from API
+  totalFocusTime: number;
   pomodoroSession: number;
 }
 
-// Define interface for a single task item from the API response
 interface ApiTask {
   id: string;
   title: string;
-  status: string; // Or specific literals: "pending" | "in-progress" | "completed"
-  createdAt: string; // ISO 8601 date string
-  // Add other properties if your API returns them and you use them
+  status: string;
+  createdAt: string;
 }
 
-// Define interface for a single project item from the API response
 interface ApiProject {
   id: string;
   name: string; // Assuming 'name' is the field for project title
@@ -132,7 +129,7 @@ export default function DashboardPage() {
           { label: "Total Tasks", value: stats.totalTask },
           { label: "Completed Tasks", value: stats.completedTask },
           { label: "Pomodoro Sessions", value: stats.pomodoroSession },
-          { label: "Focus Time", value: formatFocusTime(stats.totalFocusTime) },
+          { label: "Focus Time", value: stats.totalFocusTime },
         ].map((item, idx) => (
           <div
             key={idx}
