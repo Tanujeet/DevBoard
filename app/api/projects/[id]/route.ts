@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { ProjectStatus } from "@/lib/generated/prisma";
+import { ProjectStatus } from "@prisma/client";
 
 
 export async function PATCH(

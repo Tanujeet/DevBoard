@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 
-import { TaskStatus as PrismaTaskStatus } from "@/lib/generated/prisma";
+import { TaskStatus as PrismaTaskStatus } from "@prisma/client";
 
 export async function GET(req: Request) {
   const { userId } = await auth();
