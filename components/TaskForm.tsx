@@ -107,9 +107,9 @@ const TaskForm = ({ onSubmitSuccess }: TaskFormProps) => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="To Do">To Do</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="TODO">To Do</SelectItem>
+                    <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
+                    <SelectItem value="COMPLETED">Completed</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />

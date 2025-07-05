@@ -39,6 +39,7 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  console.log("DATABASE_URL in API route:", process.env.DATABASE_URL);
   const { userId } = await auth();
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
