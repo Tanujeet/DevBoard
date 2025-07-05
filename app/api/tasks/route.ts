@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const statusParam = url.searchParams.get("status");
 
-  let whereClause: { userId: string; status?: PrismaTaskStatus } = { userId };
+const whereClause: { userId: string; status?: PrismaTaskStatus } = { userId };
   if (statusParam) {
     const validGetStatuses = Object.values(PrismaTaskStatus);
     if (validGetStatuses.includes(statusParam as PrismaTaskStatus)) {
