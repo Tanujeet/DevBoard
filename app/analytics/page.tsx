@@ -4,6 +4,7 @@ import TaskHiveLoader from "@/components/Loader";
 import { Card, CardContent } from "@/components/ui/card";
 import { axiosInstance } from "@/lib/axios";
 import { useEffect, useState } from "react";
+
 interface AnalyticsStats {
   totalTask: number;
   completedTask: number;
@@ -11,23 +12,28 @@ interface AnalyticsStats {
   totalProject: number;
   activeProject: number;
   archivedProject: number;
-  totalFocusTime: number;
+  totalFocusTime: string;
   pomodoroSession: number;
 }
+
 const Page = () => {
   const [stats, setStats] = useState<AnalyticsStats | null>(null);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
-      const res = await axiosInstance.get("analytics");
-      setStats(res.data);
+      try {
+        const res = await axiosInstance.get("analytics");
+        setStats(res.data);
+      } catch (err) {
+        console.error("Failed to fetch analytics:", err);
+      }
     };
     fetchAnalytics();
   }, []);
 
   if (!stats)
     return (
-      <div>
+      <div className="flex justify-center items-center h-[300px]">
         <TaskHiveLoader />
       </div>
     );
