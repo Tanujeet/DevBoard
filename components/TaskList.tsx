@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatDateForInput } from "@/lib/utils";
 
 type Task = {
   id: string;
@@ -143,7 +143,9 @@ const TaskList = ({
 
             <input
               type="date"
-              value={formData.dueDate || ""}
+              value={
+                formData.dueDate ? formatDateForInput(formData.dueDate) : ""
+              }
               onChange={(e) =>
                 setFormData({ ...formData, dueDate: e.target.value })
               }

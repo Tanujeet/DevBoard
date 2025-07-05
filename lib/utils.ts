@@ -91,3 +91,11 @@ export function usePomodoroTimer(durationInMinutes = 25) {
     startTime,
   };
 }
+
+// For input fields
+export const formatDateForInput = (dateStr: string) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return "";
+  return date.toISOString().split("T")[0]; // e.g. "2025-07-16"
+};
