@@ -36,7 +36,8 @@ export async function GET() {
       _sum: { duration: true },
     });
 
-    const totalMinutes = focusTime._sum.duration || 0;
+    const totalMinutes = focusTime._sum?.duration ?? 0;
+
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
     const formattedTime = `${hours}h ${minutes}m`;
