@@ -20,29 +20,34 @@ const AddProject = () => {
   const [description, setDescription] = useState("");
   const { fetchRecentProjects } = useProjectStore();
 
-  const handlenewProject = async (ProjectType: {
-    name: string;
-    description: string;
-  }) => {
-    const handleSubmit = async () => {
-      try {
-        await axiosInstance.post("projects", ProjectType);
-        console.log("Project created successfully");
-        await fetchRecentProjects();
-        setOpen(false);
-        setProjectName("");
-        setDescription("");
-      } catch (err) {
-        console.log("Failed to create new task", err);
+ 
+  const handleSaveNewProject = async () => {
+    try {
+      if (!projectName.trim()) {
+        console.error("Project name cannot be empty.");
+
+        return;
       }
-    };
+
+      await axiosInstance.post("projects", {
+        name: projectName,
+        description: description,
+      });
+      console.log("Project created successfully");
+      await fetchRecentProjects();
+      setOpen(false);
+      setProjectName("");
+      setDescription("");
+    } catch (err) {
+      console.error("Failed to create new project", err);
+    }
   };
 
   return (
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <button className="border border-black rounded-2xl p-2   bg-black text-white   hover:bg-white hover:text-black transition">
+          <button className="border border-black rounded-2xl p-2 bg-black text-white hover:bg-white hover:text-black transition">
             Add Project
           </button>
         </DialogTrigger>
@@ -67,15 +72,10 @@ const AddProject = () => {
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button
-              onClick={() =>
-                handlenewProject({
-                  name: projectName,
-                  description: description,
-                })
-              }
-            >
-              Save
+            <Button onClick={handleSaveNewProject}>Save</Button>
+
+            <Button variant="outline" onClick={() => setOpen(false)}>
+              Cancel
             </Button>
           </div>
         </DialogContent>

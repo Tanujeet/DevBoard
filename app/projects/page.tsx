@@ -20,8 +20,8 @@ const Page = () => {
     fetchRecentProjects();
   }, [fetchRecentProjects]);
   const handleProjectAddSuccess = async () => {
-    await fetchRecentProjects(); // Re-fetch projects to update the list
-    // Optionally: show a success toast message
+    await fetchRecentProjects(); 
+  
   };
 
   return (
