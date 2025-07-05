@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 
-import { TaskStatus as PrismaTaskStatus } from "@prisma/client";
+import { Prisma, TaskStatus as PrismaTaskStatus } from "@prisma/client";
 
 export async function GET(req: Request) {
   const { userId } = await auth();
@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const statusParam = url.searchParams.get("status");
 
-const whereClause: { userId: string; status?: PrismaTaskStatus } = { userId };
+  const whereClause: { userId: string; status?: PrismaTaskStatus } = { userId };
   if (statusParam) {
     const validGetStatuses = Object.values(PrismaTaskStatus);
     if (validGetStatuses.includes(statusParam as PrismaTaskStatus)) {
@@ -39,7 +39,6 @@ const whereClause: { userId: string; status?: PrismaTaskStatus } = { userId };
 }
 
 export async function POST(req: Request) {
-  console.log("DATABASE_URL in API route:", process.env.DATABASE_URL);
   const { userId } = await auth();
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
@@ -47,7 +46,7 @@ export async function POST(req: Request) {
 
   const body = await req.json();
   const { title, status, dueDate } = body;
-
+  console.log("Received status:", status);
   if (!title || title.trim() === "") {
     return new NextResponse("Title is required", { status: 400 });
   }
