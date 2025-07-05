@@ -5,31 +5,24 @@ import { TaskStatus, ProjectStatus } from "@prisma/client";
 
 export async function GET() {
   const { userId } = await auth();
+
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
   try {
-    const totalTask = await prisma.task.count({
-      where: { userId },
-    });
-
+    const totalTask = await prisma.task.count({ where: { userId } });
     const completedTask = await prisma.task.count({
       where: { userId, status: TaskStatus.COMPLETED },
     });
-
     const activeTask = await prisma.task.count({
       where: { userId, status: TaskStatus.IN_PROGRESS },
     });
 
-    const totalProject = await prisma.project.count({
-      where: { userId },
-    });
-
+    const totalProject = await prisma.project.count({ where: { userId } });
     const archivedProject = await prisma.project.count({
       where: { userId, status: ProjectStatus.Archived },
     });
-
     const activeProject = await prisma.project.count({
       where: { userId, status: ProjectStatus.Active },
     });
@@ -58,8 +51,8 @@ export async function GET() {
       pomodoroSession,
       totalFocusTime: formattedTime,
     });
-  } catch (err: unknown) {
-    console.error("ANALYTICS ERROR:", err);
+  } catch (error) {
+    console.error("ANALYTICS API ERROR:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
