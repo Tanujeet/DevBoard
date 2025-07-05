@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-
+import { TaskStatus } from "@prisma/client";
 import { Prisma, TaskStatus as PrismaTaskStatus } from "@prisma/client";
 
 export async function GET(req: Request) {
@@ -38,46 +38,58 @@ export async function GET(req: Request) {
   }
 }
 
+type CreateTaskPayload = {
+  title: string;
+  status: TaskStatus;
+  dueDate?: string;
+};
+
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) {
     return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const body = await req.json();
+  const body = (await req.json()) as CreateTaskPayload;
   const { title, status, dueDate } = body;
+
   console.log("Received status:", status);
-  if (!title || title.trim() === "") {
+  console.log("Received dueDate:", dueDate);
+
+  if (!title?.trim()) {
     return new NextResponse("Title is required", { status: 400 });
   }
 
-  const allowedStatuses: PrismaTaskStatus[] = [
-    PrismaTaskStatus.TODO,
-    PrismaTaskStatus.IN_PROGRESS,
-    PrismaTaskStatus.COMPLETED,
-  ];
-
-  if (!allowedStatuses.includes(status as PrismaTaskStatus)) {
+  // Validate enum
+  if (!Object.values(TaskStatus).includes(status)) {
     return new NextResponse("Invalid status", { status: 400 });
   }
 
+  // Validate date string (if provided)
+  let parsedDueDate: Date | undefined;
+  if (dueDate !== undefined) {
+    const ms = Date.parse(dueDate);
+    if (isNaN(ms)) {
+      return new NextResponse("Invalid dueDate", { status: 400 });
+    }
+    parsedDueDate = new Date(ms);
+  }
+
   try {
-    const createNewTask = await prisma.task.create({
+    const newTask = await prisma.task.create({
       data: {
         title,
         userId,
-        status: status as PrismaTaskStatus,
-        dueDate: dueDate ? new Date(dueDate) : null,
+        status,
+        dueDate: parsedDueDate ?? null,
       },
     });
 
-    return NextResponse.json({
-      message: "Task created",
-      task: createNewTask,
-    });
-  } catch (error: unknown) {
-    console.error("POST TASK ERROR:", error);
-
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json({ message: "Task created", task: newTask });
+  } catch (err: unknown) {
+    // Extract full Prisma error message
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error("POST TASK ERROR:", errorMessage);
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
