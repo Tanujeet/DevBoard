@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-
+import { TaskStatus } from "@prisma/client";
 
 export async function PATCH(
   req: Request,
@@ -19,7 +19,7 @@ export async function PATCH(
     return new NextResponse("Title and status required", { status: 400 });
   }
 
-  const allowedStatuses = ["pending", "in-progress", "completed"];
+  const allowedStatuses = Object.values(TaskStatus);
   if (!allowedStatuses.includes(status)) {
     return new NextResponse("Invalid status", { status: 400 });
   }
