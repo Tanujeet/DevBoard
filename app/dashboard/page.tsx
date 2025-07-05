@@ -11,7 +11,7 @@ import PomodoroWidget from "@/components/Pomodoro";
 interface DashboardStats {
   totalTask: number;
   completedTask: number;
-  totalFocusTime: number;
+  totalFocusTimeInMinutes: number;
   pomodoroSession: number;
 }
 
@@ -46,7 +46,7 @@ export default function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats>({
     totalTask: 0,
     completedTask: 0,
-    totalFocusTime: 0,
+    totalFocusTimeInMinutes: 0,
     pomodoroSession: 0,
   });
 
@@ -129,7 +129,10 @@ export default function DashboardPage() {
           { label: "Total Tasks", value: stats.totalTask },
           { label: "Completed Tasks", value: stats.completedTask },
           { label: "Pomodoro Sessions", value: stats.pomodoroSession },
-          { label: "Focus Time", value: stats.totalFocusTime },
+          {
+            label: "Focus Time",
+            value: formatFocusTime(stats.totalFocusTimeInMinutes),
+          },
         ].map((item, idx) => (
           <div
             key={idx}

@@ -50,7 +50,7 @@ export async function GET() {
       activeProject,
       archivedProject,
       pomodoroSession,
-      totalFocusTime: formattedTime,
+      totalFocusTimeInMinutes: totalMinutes,
     });
   } catch (error) {
     const err = error instanceof Error ? error.message : JSON.stringify(error);
