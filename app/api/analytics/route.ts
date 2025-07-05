@@ -53,7 +53,9 @@ export async function GET() {
       totalFocusTime: formattedTime,
     });
   } catch (error) {
-    console.error("ANALYTICS API ERROR:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    const err = error instanceof Error ? error.message : JSON.stringify(error);
+    console.error("ANALYTICS API ERROR:", err);
+    return new NextResponse(err, { status: 500 });
   }
+  
 }
