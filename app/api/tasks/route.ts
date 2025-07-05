@@ -87,7 +87,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Task created", task: newTask });
   } catch (err: unknown) {
-    // Extract full Prisma error message
     const errorMessage = err instanceof Error ? err.message : String(err);
     console.error("POST TASK ERROR:", errorMessage);
     return NextResponse.json({ error: errorMessage }, { status: 500 });

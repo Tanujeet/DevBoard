@@ -1,62 +1,65 @@
-import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-
-import { ProjectStatus, TaskStatus } from "@prisma/client";
+import { TaskStatus, ProjectStatus } from "@prisma/client";
 
 export async function GET() {
   const { userId } = await auth();
-
   if (!userId) {
-    return new NextResponse("Unauthorised", { status: 401 });
+    return new NextResponse("Unauthorized", { status: 401 });
   }
 
-  const totalTask = await prisma.task.count({
-    where: { userId },
-  });
+  try {
+    const totalTask = await prisma.task.count({
+      where: { userId },
+    });
 
-  const completedTask = await prisma.task.count({
-    where: { userId, status: TaskStatus.COMPLETED },
-  });
+    const completedTask = await prisma.task.count({
+      where: { userId, status: TaskStatus.COMPLETED },
+    });
 
-  const activeTask = await prisma.task.count({
-    where: { userId, status: TaskStatus.IN_PROGRESS },
-  });
+    const activeTask = await prisma.task.count({
+      where: { userId, status: TaskStatus.IN_PROGRESS },
+    });
 
-  const totalProject = await prisma.project.count({
-    where: { userId },
-  });
+    const totalProject = await prisma.project.count({
+      where: { userId },
+    });
 
-  const archivedProject = await prisma.project.count({
-    where: { userId, status: ProjectStatus.Archived },
-  });
+    const archivedProject = await prisma.project.count({
+      where: { userId, status: ProjectStatus.Archived },
+    });
 
-  const activeProject = await prisma.project.count({
-    where: { userId, status: ProjectStatus.Active },
-  });
+    const activeProject = await prisma.project.count({
+      where: { userId, status: ProjectStatus.Active },
+    });
 
-  const pomodoroSession = await prisma.pomodoroSession.count({
-    where: { userId },
-  });
+    const pomodoroSession = await prisma.pomodoroSession.count({
+      where: { userId },
+    });
 
-  const focusTime = await prisma.pomodoroSession.aggregate({
-    where: { userId },
-    _sum: { duration: true },
-  });
+    const focusTime = await prisma.pomodoroSession.aggregate({
+      where: { userId },
+      _sum: { duration: true },
+    });
 
-  const totalMinutes = focusTime._sum.duration || 0;
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  const formattedTime = `${hours}h ${minutes}m`;
+    const totalMinutes = focusTime._sum.duration || 0;
+    const hours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+    const formattedTime = `${hours}h ${minutes}m`;
 
-  return NextResponse.json({
-    totalTask,
-    completedTask,
-    activeTask,
-    totalProject,
-    activeProject,
-    archivedProject,
-    pomodoroSession,
-    totalFocusTime: formattedTime,
-  });
+    return NextResponse.json({
+      totalTask,
+      completedTask,
+      activeTask,
+      totalProject,
+      activeProject,
+      archivedProject,
+      pomodoroSession,
+      totalFocusTime: formattedTime,
+    });
+  } catch (err: unknown) {
+    console.error("ANALYTICS ERROR:", err);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
 }
