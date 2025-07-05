@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { ProjectStatus, TaskStatus } from "@prisma/client";
+
 export async function GET() {
   const { userId } = await auth();
 
@@ -14,11 +16,11 @@ export async function GET() {
   });
 
   const completedTask = await prisma.task.count({
-    where: { userId, status: "COMPLETED" },
+    where: { userId, status: TaskStatus.COMPLETED },
   });
 
   const activeTask = await prisma.task.count({
-    where: { userId, status: "IN_PROGRESS" },
+    where: { userId, status: TaskStatus.IN_PROGRESS },
   });
 
   const totalProject = await prisma.project.count({
@@ -26,11 +28,11 @@ export async function GET() {
   });
 
   const archivedProject = await prisma.project.count({
-    where: { userId, status: "Archived" },
+    where: { userId, status: ProjectStatus.Archived },
   });
 
   const activeProject = await prisma.project.count({
-    where: { userId, status: "Active" },
+    where: { userId, status: ProjectStatus.Active },
   });
 
   const pomodoroSession = await prisma.pomodoroSession.count({
