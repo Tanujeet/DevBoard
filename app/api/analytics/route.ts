@@ -14,11 +14,11 @@ export async function GET() {
   });
 
   const completedTask = await prisma.task.count({
-    where: { userId, status: "Completed" },
+    where: { userId, status: "COMPLETED" },
   });
 
   const activeTask = await prisma.task.count({
-    where: { userId, status: "in-progress" },
+    where: { userId, status: "IN_PROGRESS" },
   });
 
   const totalProject = await prisma.project.count({
