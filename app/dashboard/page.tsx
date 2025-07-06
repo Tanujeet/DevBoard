@@ -24,10 +24,9 @@ interface ApiTask {
 
 interface ApiProject {
   id: string;
-  name: string; // Assuming 'name' is the field for project title
-  status: string; // Or specific literals: "All" | "Active" | "Archived" | "Completed"
-  createdAt: string; // ISO 8601 date string
-  // Add other properties if your API returns them and you use them
+  name: string;
+  status: string;
+  createdAt: string;
 }
 
 
