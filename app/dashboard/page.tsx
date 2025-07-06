@@ -107,7 +107,6 @@ export default function DashboardPage() {
     fetchRecentActivity();
   }, []);
 
-  // Helper function to format focus time
   const formatFocusTime = (minutes: number): string => {
     const hours = Math.floor(minutes / 60);
     const remainingMinutes = minutes % 60;
@@ -144,7 +143,6 @@ export default function DashboardPage() {
         ))}
       </section>
 
-      {/* Recent Activity Feed */}
       <section>
         <h3 className="text-xl font-semibold mb-4">Recent Activity</h3>
         <div className="space-y-4">
@@ -170,7 +168,6 @@ export default function DashboardPage() {
         </div>
       </section>
 
-      {/* Pomodoro Widget */}
       <PomodoroWidget />
     </main>
   );
