@@ -36,7 +36,7 @@ interface ActivityItem {
   title: string;
   status: string;
   createdAt: string;
-  type: "Task" | "Project"; // This is the key literal type
+  type: "Task" | "Project";
 }
 
 export default function DashboardPage() {
