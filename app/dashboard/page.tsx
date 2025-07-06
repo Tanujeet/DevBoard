@@ -72,25 +72,25 @@ export default function DashboardPage() {
           axiosInstance.get<{ projects: ApiProject[] }>("/projects"),
         ]);
 
-        // Explicitly type the mapped object to ActivityItem
+        
         const tasks: ActivityItem[] = taskRes.data.tasks.map(
           (task: ApiTask): ActivityItem => ({
             id: task.id,
             title: task.title,
             status: task.status,
             createdAt: task.createdAt,
-            type: "Task", // This literal "Task" is compatible with "Task" | "Project"
+            type: "Task",
           })
         );
 
-        // Explicitly type the mapped object to ActivityItem
+   
         const projects: ActivityItem[] = projectRes.data.projects.map(
           (project: ApiProject): ActivityItem => ({
             id: project.id,
-            title: project.name, // Use project.name for title
+            title: project.name,
             status: project.status,
             createdAt: project.createdAt,
-            type: "Project", // This literal "Project" is compatible with "Task" | "Project"
+            type: "Project",
           })
         );
 
