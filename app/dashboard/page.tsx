@@ -30,7 +30,7 @@ interface ApiProject {
   // Add other properties if your API returns them and you use them
 }
 
-// Define interface for the combined activity item displayed in the feed
+
 interface ActivityItem {
   id: string;
   title: string;
@@ -122,7 +122,6 @@ export default function DashboardPage() {
         </p>
       </div>
 
-      {/* Snapshot Section */}
       <section className="flex overflow-x-auto gap-4 pb-4">
         {[
           { label: "Total Tasks", value: stats.totalTask },
